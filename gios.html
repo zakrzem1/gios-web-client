@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style type="text/css">body {
+      color: white;
+    }</style>
+  </head>
+  <body bgcolor="#000000">
+    <div id="root"></div>
+      <script type="text/babel">
+      class AirPollution extends React.Component {
+        constructor(props) {
+            super(props);
+        }
+        fetchPollutionData(me) {
+          fetch('http://api.gios.gov.pl/pjp-api/rest/data/getData/17225').then(function(response) {
+            return response.json();
+          }).then(function(myJson) {
+            me.setState({pm10 : myJson.values[0].value});
+          });    
+          fetch('http://api.gios.gov.pl/pjp-api/rest/data/getData/16044').then(function(response) {
+            return response.json();
+          }).then(function(myJson) {
+            me.setState({pm25 : myJson.values[0].value}); 
+          });      
+        }
+        componentDidMount() {
+          var self = this;
+          this.fetchPollutionData(self);
+          this.interval = setInterval(() => self.fetchPollutionData(self), 1800000);
+        }
+        componentWillUnmount() {
+          clearInterval(this.interval);
+        }
+        render() {
+          if(this.state){
+            this.props = {pm25: this.state.pm25, pm10 : this.state.pm10};
+            //this.props = {pm25: 201, pm10 : 301};
+          }
+          return (
+            <div className="air-pollution">
+              <h1>{this.props.name}</h1>
+              <Dust label="PM 2.5" value={this.props.pm25} />
+              <Dust label="PM 10" value={this.props.pm10} />
+            </div>
+          );
+        }
+      }
+      
+      class Dust extends React.Component {
+        
+        pollutionColor() { 
+          if(this.props.value<=50){
+            return '#f3ff23';
+          }else if(this.props.value<=200){
+            return '#f38e23';
+          }else if(this.props.value<=300){
+            return '#ff3200';
+          }else{
+            return '#aa0000';
+          } 
+        }
+
+        render() {
+          var dustStyle = {float:'left',listStyleType:'none'}
+          var valueStyle = {fontSize: 'x-large'}
+          var colorfulCircle = {padding: '2px 11px', borderRadius: '100%', backgroundColor: this.pollutionColor()}
+          return (<ul style={dustStyle}>
+                <li>{this.props.label}</li>
+                <li style={valueStyle}>{this.props.value}</li>
+                <li><span style={colorfulCircle}/></li>
+              </ul>);
+          }
+      }
+      ReactDOM.render(
+        <AirPollution name="Pył Zawieszony" />,
+        document.getElementById('root')
+      );
+
+      </script>
+    <!--
+      Note: this page is a great way to try React but it's not suitable for production.
+      It slowly compiles JSX with Babel in the browser and uses a large development build of React.
+
+      To set up a production-ready React build environment, follow these instructions:
+      * https://reactjs.org/docs/add-react-to-a-new-app.html
+      * https://reactjs.org/docs/add-react-to-an-existing-app.html
+
+      You can also use React without JSX, in which case you can remove Babel:
+      * https://reactjs.org/docs/react-without-jsx.html
+      * https://reactjs.org/docs/cdn-links.html
+    -->
+  </body>
+</html>
