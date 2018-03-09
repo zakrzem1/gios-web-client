@@ -56,7 +56,7 @@
         
         pollutionColor() { 
           if(this.props.value<=50){
-            return '#f3ff23';
+            return '#ccff99';
           }else if(this.props.value<=200){
             return '#f38e23';
           }else if(this.props.value<=300){
@@ -68,10 +68,11 @@
 
         render() {
           var dustStyle = {float:'left',listStyleType:'none'}
-          var valueStyle = {fontSize: 'x-large'}
-          var colorfulCircle = {padding: '2px 11px', borderRadius: '100%', backgroundColor: this.pollutionColor()}
+          var valueStyle = {fontSize: '64px'}
+          var colorfulCircle = {marginLeft: '40px', padding: '12px 22px', borderRadius: '100%', backgroundColor: this.pollutionColor()}
+          var labelStyle = {fontSize: '32px'}
           return (<ul style={dustStyle}>
-                <li>{this.props.label}</li>
+                <li style={labelStyle}>{this.props.label}</li>
                 <li style={valueStyle}>{this.props.value}</li>
                 <li><span style={colorfulCircle}/></li>
               </ul>);
